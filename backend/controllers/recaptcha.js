@@ -15,4 +15,5 @@ async function verifyRecaptcha (captcha){
     return response;
 }
 
-export default verifyRecaptcha;
+// export default verifyRecaptcha;
+module.exports = verifyRecaptcha;

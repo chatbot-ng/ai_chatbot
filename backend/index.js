@@ -1,13 +1,12 @@
-import * as dotenv from "dotenv";
-dotenv.config({ path: './.env' });
+ require("dotenv").config();
 
-import express from 'express';
-import cors from 'cors';
-import morgan from 'morgan';
-import path from 'path';
+const express = require ('express');
+const cors = require ('cors');
+const morgan = require ('morgan');
+const path = require ('path');
 
-import {connectDatabase} from './database/connectDatabase';
-import authRouter from './routes/auth';
+const connectDatabase = require('./database/connectDatabase');
+const authRouter  = require('./routes/auth');
 // import deptRouter from './routes/department.js';
 
 const app = express();

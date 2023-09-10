@@ -1,9 +1,9 @@
-import { User } from "../database/User";
-import jwt from 'jsonwebtoken';
-import config from "../config/config";
-import sendEmail from "./sendEmail";
-import brcypt from 'bcryptjs';
-import verifyRecaptcha  from "./recaptcha";
+const { User } =require ("../database/User");
+const jwt = require('jsonwebtoken');
+const config = require("../config/config");
+const sendEmail = require("./sendEmail");
+const brcypt = require('bcryptjs');
+const verifyRecaptcha  = require("./recaptcha");
 function generateToken(user) {
     const { _id, name, email, image,emailVerification,isVerified} = user;
 
@@ -13,7 +13,7 @@ function generateToken(user) {
 
 }
 
-export async function register(req, res) {
+async function register(req, res) {
     try {
         let {
             email, password,username,name,tokenRecaptcha
@@ -73,7 +73,7 @@ export async function register(req, res) {
     }
 }
 
-export async function login(req, res) {
+async function login(req, res) {
     try {
 
         const {
@@ -115,7 +115,7 @@ export async function login(req, res) {
     }
 }
 
-export async function getLoggedInUser(req, res) {
+async function getLoggedInUser(req, res) {
     try {
         const user = req.user;
 
@@ -131,7 +131,7 @@ export async function getLoggedInUser(req, res) {
     }
 }
 
-export async function googleLogin(req,res){
+async function googleLogin(req,res){
     try {
         let {token} = req.body
         let {email,name,picture:image} = jwt.decode(token)
@@ -172,7 +172,7 @@ export async function googleLogin(req,res){
     }
 }
 
-export async function forgetPassword(req,res){
+async function forgetPassword(req,res){
     try {
         let {email,tokenRecaptcha} = req.body
         let captcha = await verifyRecaptcha(tokenRecaptcha)
@@ -205,7 +205,7 @@ export async function forgetPassword(req,res){
     }
 }
 
-export async function resetPassword(req,res){
+async function resetPassword(req,res){
     try {
         let {token,password,recaptchaToken} = req.body
         let {email} = jwt.verify(token,config.JWT_SECRET_KEY)
@@ -236,7 +236,7 @@ export async function resetPassword(req,res){
     }
 }
 
-export async function checkToken(req,res){
+async function checkToken(req,res){
     try {
         const {token} = req.body
         let {email,iat,emailVerification} = jwt.verify(token,config.JWT_SECRET_KEY)
@@ -261,7 +261,7 @@ export async function checkToken(req,res){
     }
 }
 
-export async function checkUsernameAvailability(req,res){
+async function checkUsernameAvailability(req,res){
     try{
         const {username} = req.body
         let user = await User.findOne({
@@ -284,7 +284,7 @@ export async function checkUsernameAvailability(req,res){
     }
 }
 
-export async function verifyEmail(req,res){
+async function verifyEmail(req,res){
     try{
         const {token} = req.body
         let {email,iat} = jwt.verify(token,config.JWT_SECRET_KEY)
@@ -315,7 +315,7 @@ export async function verifyEmail(req,res){
     }
 }
 
-export async function sendVerifyEmail(req,res){
+async function sendVerifyEmail(req,res){
     try{
         const {email} = req.body
         const user = await User.findOne({email})
@@ -345,4 +345,17 @@ export async function sendVerifyEmail(req,res){
             message: 'Something went wrong'
         })
     }
+}
+
+module.exports = {
+    register,
+    login,
+    getLoggedInUser,
+    googleLogin,
+    forgetPassword,
+    resetPassword,
+    checkToken,
+    checkUsernameAvailability,
+    verifyEmail,
+    sendVerifyEmail
 }

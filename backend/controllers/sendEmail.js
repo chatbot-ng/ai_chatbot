@@ -59,4 +59,6 @@ async function sendEmail(to,subject,token) {
 
 
 
-export default sendEmail;
+// export default sendEmail;
+
+module.exports = sendEmail;

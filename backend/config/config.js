@@ -1,4 +1,4 @@
-export const config = {
+const config = {
     JWT_SECRET_KEY: process.env.JWT_SECRET_KEY,
     DB_CONNECTION_URL: process.env.DB_CONNECTION_URL,
     RECAPTCHA_KEY : process.env.RECAPTCHA_KEY,
@@ -6,4 +6,5 @@ export const config = {
     FRONTEND_URL : process.env.FRONTEND_URL,
 }
 
-export default config;
+// export default config;
+module.exports = config;
