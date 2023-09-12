@@ -1,4 +1,4 @@
- require("dotenv").config();
+require("dotenv").config();
 
 const express = require ('express');
 const cors = require ('cors');
@@ -9,32 +9,37 @@ const session = require('express-session')
 const connectDatabase = require('./database/connectDatabase');
 const authRouter  = require('./routes/auth');
 const chatRouter = require("./routes/chat");
+const config = require("./config/config");
 const app = express();
 
 
+app.use(morgan('common'));
 app.use(express.json());
 app.use(session({
     secret: 'ajksdhajdha',
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true,
     })
 )
-app.use(cors());
-app.use(morgan('common'));
+app.use(cors({
+    origin: config.FRONTEND_URL,
+    credentials:true
+}));
 
 
 app.get('/hello', (req, res) => {
-    if(req.session.counter === undefined ){
-        req.session.counter = 0
-    }else{
+    // if(req.session.counter === undefined ){
+    //     req.session.counter = 0
+    // }else{
         req.session.counter++
-    }
+    // }
         res.send(`Hello there ${req.session.counter} times ${typeof req.session.counter}`)
 
 })
 
 app.use('/api/auth', authRouter);
 app.use('/api/chat',chatRouter);
+
 app.use('/', express.static('../frontend/dist'));
 
 app.get('*', (req, res) => {

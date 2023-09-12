@@ -40,11 +40,11 @@ export const getMessageAction = (message)=>{
     return async function (dispatch,getState){
         const data = await axios.post('/api/chat/reply',{
             message
-        })
+        },{withCredentials:true})
         console.log(data?.data)
         dispatch({
             type:"NEW-MESSAGE",
-            payload:data?.data?.data?.message
+            payload:data?.data?.data?.response
         })
     } 
 }

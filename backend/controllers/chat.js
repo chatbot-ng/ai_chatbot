@@ -14,21 +14,19 @@ const {reply,createLangChain} = require('../langChain/index.js')
 //         }
 // }
 
-const sendReply = (req, res) => {
+const sendReply = async (req, res) => {
     const {message} = req.body
-    // console.log(req.session.chain,typeof req.session.chain)
-    // if(req.session.chain===undefined){
-    //     console.log('new')
-    //     const data = await createLangChain()
-    //     req.session.chain=0
-    // }else{
-        req.session.chain++
-    // }
-    // const chain = req.session.chain
-    console.log(req.session.chain)
-    // const data = await reply(message,chain)
+    if(req.session.memory===undefined){
+        const memory = await createLangChain()
+        req.session.memory={memory}
+    }
+    const memory = req.session.memory
+    req.session.memory = await createLangChain(memory)
+    console.log(memory)
+    // const data = await reply(message,memory)
     res.send({
-        message: req.session.chain
+        // data,
+        memory
     })
 }
 
