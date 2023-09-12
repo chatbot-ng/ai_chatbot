@@ -4,28 +4,38 @@ const express = require ('express');
 const cors = require ('cors');
 const morgan = require ('morgan');
 const path = require ('path');
+const session = require('express-session')
 
 const connectDatabase = require('./database/connectDatabase');
 const authRouter  = require('./routes/auth');
-// import deptRouter from './routes/department.js';
-
+const chatRouter = require("./routes/chat");
 const app = express();
 
 
 app.use(express.json());
+app.use(session({
+    secret: 'ajksdhajdha',
+    resave: false,
+    saveUninitialized: false,
+    })
+)
 app.use(cors());
 app.use(morgan('common'));
 
-app.get('/hello', (req, res, next) => {
 
-    res.send('Hello there')
+app.get('/hello', (req, res) => {
+    if(req.session.counter === undefined ){
+        req.session.counter = 0
+    }else{
+        req.session.counter++
+    }
+        res.send(`Hello there ${req.session.counter} times ${typeof req.session.counter}`)
 
-    next();
 })
 
 app.use('/api/auth', authRouter);
-// app.use('/api/department',deptRouter);
-app.use('/', express.static('../frontend/build'));
+app.use('/api/chat',chatRouter);
+app.use('/', express.static('../frontend/dist'));
 
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/build/index.html'));

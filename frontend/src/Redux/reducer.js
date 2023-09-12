@@ -1,5 +1,6 @@
 let initialState ={
-
+    user: 'new',
+    chat:['Ask me a question']
 }
 
 const reducer = (state = initialState, action) => {
@@ -8,6 +9,11 @@ const reducer = (state = initialState, action) => {
             return {
                ...state,
                 user: action.user
+            }
+        case 'NEW-MESSAGE':
+            return {
+                ...state,
+                chat: [...state.chat, action.payload]
             }
         default:
             return state
