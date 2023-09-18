@@ -7,19 +7,26 @@ const {ConversationChain} = require("langchain/chains");
 const chat = new ChatOpenAI({
     temperature: 0,
   });
-  const initial_memory = new BufferMemory({
-      chatHistory: new ChatMessageHistory([new AIMessage('Ask me a question')])
-  });
-const createLangChain = async (memory=initial_memory) => {
-    const new_Memory = new BufferMemory(memory)
-    return new_Memory
+
+const memoryStorage = {
+     pushMemory: function(id){
+        this[id] = new BufferMemory({
+            chatHistory: new ChatMessageHistory([new AIMessage('Ask me a question')])
+        });
+        setTimeout(
+            ()=>{
+            delete this[id]
+        },60000)
+    }
 }
-const reply = async (message,memory) => {
-    console.log(typeof chains)
+const reply = async (message,id) => {
     try{
+        if(memoryStorage[id]===undefined){
+            memoryStorage.pushMemory(id)
+        }
         const chains = new ConversationChain({
             llm: chat,
-            memory
+            memory:memoryStorage[id]
         })
         const reply = await chains.call({input:message});    
         return reply;
@@ -27,4 +34,4 @@ const reply = async (message,memory) => {
     catch(e){console.log(e);return null;}
 }
 
-module.exports = {reply,createLangChain};
+module.exports = {reply};

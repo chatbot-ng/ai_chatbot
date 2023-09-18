@@ -16,17 +16,11 @@ const {reply,createLangChain} = require('../langChain/index.js')
 
 const sendReply = async (req, res) => {
     const {message} = req.body
-    if(req.session.memory===undefined){
-        const memory = await createLangChain()
-        req.session.memory={memory}
-    }
-    const memory = req.session.memory
-    req.session.memory = await createLangChain(memory)
-    console.log(memory)
-    // const data = await reply(message,memory)
+
+    const id = req.session.memory
+    const data = await reply(message,id)
     res.send({
-        // data,
-        memory
+        data
     })
 }
 
