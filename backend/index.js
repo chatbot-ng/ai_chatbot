@@ -46,7 +46,7 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
 })
 
-const port = process.argv[2] || 3035;
+const port = process.argv[2] || 443;
 
 connectDatabase()
 .then(() => {
