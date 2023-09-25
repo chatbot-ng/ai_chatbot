@@ -44,7 +44,7 @@ export const getMessageAction = (message)=>{
         console.log(data?.data)
         dispatch({
             type:"NEW-MESSAGE",
-            payload:data?.data?.data?.response
+            payload:data?.data?.data?.text
         })
     } 
 }

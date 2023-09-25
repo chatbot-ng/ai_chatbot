@@ -1,5 +1,5 @@
-const config = require("../config/config");
-const axios = require('axios');
+import config from "../config/config.js";
+import axios from 'axios';
 async function sendEmail(to,subject,token) {
   const {SMTP_KEY,FRONTEND_URL} = config;
   const obj = {
@@ -61,4 +61,4 @@ async function sendEmail(to,subject,token) {
 
 // export default sendEmail;
 
-module.exports = sendEmail;
+export default sendEmail;

@@ -1,5 +1,5 @@
-const config = require("../config/config");
-const axios = require('axios');
+import config from "../config/config.js";
+import axios from 'axios';
 async function verifyRecaptcha (captcha){
     const {RECAPTCHA_KEY} = config;
     let response = false
@@ -16,4 +16,4 @@ async function verifyRecaptcha (captcha){
 }
 
 // export default verifyRecaptcha;
-module.exports = verifyRecaptcha;
+export default verifyRecaptcha;

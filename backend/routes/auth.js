@@ -1,7 +1,7 @@
 
-const { Router } = require ('express');
-const { register, login, getLoggedInUser, googleLogin, forgetPassword, resetPassword, checkToken, sendVerifyEmail, checkUsernameAvailability, verifyEmail } = require ('../controllers/auth');
-const authMiddleware = require ('../middlewares/auth');
+import { Router } from 'express';
+import { register, login, getLoggedInUser, googleLogin, forgetPassword, resetPassword, checkToken, sendVerifyEmail, checkUsernameAvailability, verifyEmail } from '../controllers/auth.js';
+import authMiddleware from '../middlewares/auth.js';
 
 const authRouter = Router();
 
@@ -17,4 +17,4 @@ authRouter.post('/checkUsername', checkUsernameAvailability);
 authRouter.post('/sendVerifyEmail', sendVerifyEmail);
 
 // export default authRouter;
-module.exports = authRouter;
+export default authRouter;

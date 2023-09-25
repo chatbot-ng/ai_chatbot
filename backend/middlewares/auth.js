@@ -1,7 +1,8 @@
-const { verify, decode } = require('jsonwebtoken');
-const { User } =require( "../database/User");
-const config =require( '../config/config');
+import jsonwebtoken from 'jsonwebtoken';
+import User from "../database/User.js";
+import config from '../config/config.js';
 const {JWT_SECRET_KEY} = config
+const { verify, decode } = jsonwebtoken
 async function auth(req, res, next) {
     const authorization = req.headers['authorization'];
 
@@ -48,4 +49,4 @@ async function auth(req, res, next) {
 }
 
 // export default auth;
-module.exports = auth;
+export default auth;

@@ -1,20 +1,7 @@
-const {reply,createLangChain} = require('../langChain/index.js')
+import { reply } from '../langChain/index.js'
 
-// const createChain = async(req, res) => {
-//     try{const data = await createLangChain()
-//     req.session.chain = data
-//     console.log(typeof chain)
-//     res.send({
-//         message: 'Created'
-//     })}
-//     catch(err){
-//             res.send({
-//                 message: err
-//             })
-//         }
-// }
 
-const sendReply = async (req, res) => {
+export const sendReply = async (req, res) => {
     const {message} = req.body
 
     const id = req.session.memory
@@ -24,9 +11,15 @@ const sendReply = async (req, res) => {
     })
 }
 
+// export const test = async (req, res) => {
+//     const data = await loadPDF()
+//     res.send({
+//         data
+//     })
+// }
 
 
-module.exports = {
-    sendReply,
-    // createChain
-}
+// export default {
+//     sendReply,
+//     test
+// }

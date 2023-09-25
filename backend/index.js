@@ -1,20 +1,21 @@
-require("dotenv").config();
+import "dotenv/config.js";
+import path from 'path';
+import { fileURLToPath } from 'url';
+import express, { json,static as static_ } from 'express';
+import cors from 'cors';
+import morgan from 'morgan';
+import { join } from 'path';
+import session from 'express-session';
 
-const express = require ('express');
-const cors = require ('cors');
-const morgan = require ('morgan');
-const path = require ('path');
-const session = require('express-session')
-
-const connectDatabase = require('./database/connectDatabase');
-const authRouter  = require('./routes/auth');
-const chatRouter = require("./routes/chat");
-const config = require("./config/config");
+import connectDatabase from './database/connectDatabase.js';
+import authRouter from './routes/auth.js';
+import chatRouter from "./routes/chat.js";
+import { FRONTEND_URL } from "./config/config.js";
 const app = express();
-
+// import { loadPDF } from './langChain/index.js';
 
 app.use(morgan('common'));
-app.use(express.json());
+app.use(json());
 app.use(session({
     secret: 'ajksdhajdha',
     resave: false,
@@ -22,31 +23,29 @@ app.use(session({
     })
 )
 app.use(cors({
-    origin: config.FRONTEND_URL,
+    origin: FRONTEND_URL,
     credentials:true
 }));
 
+const __filename = fileURLToPath(import.meta.url);
+
+const __dirname = path.dirname(__filename);
 
 app.get('/hello', (req, res) => {
-    // if(req.session.counter === undefined ){
-    //     req.session.counter = 0
-    // }else{
         req.session.counter++
-    // }
         res.send(`Hello there ${req.session.counter} times ${typeof req.session.counter}`)
-
 })
 
 app.use('/api/auth', authRouter);
 app.use('/api/chat',chatRouter);
 
-app.use('/', express.static('../frontend/dist'));
+app.use('/', static_('../frontend/dist'));
 
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
+    res.sendFile(join(__dirname, '../frontend/dist/index.html'));
 })
 
-const port = process.argv[2] || 443;
+const port = process.argv[2] || 3035;
 
 connectDatabase()
 .then(() => {
