@@ -11,6 +11,18 @@ const reducer = (state = initialState, action) => {
                 user: action.user
             }
         case 'NEW-MESSAGE':
+            if(action.payload.count!==undefined){
+                let newArray = [...state.chat]
+                if(newArray[action.payload.count]===undefined){
+                    newArray[action.payload.count]=action.payload.text
+                }else{
+                    newArray[action.payload.count]+=action.payload.text
+                }
+                return {
+                ...state,
+                    chat: newArray
+                }
+            }
             return {
                 ...state,
                 chat: [...state.chat, action.payload]

@@ -7,7 +7,7 @@ export const axios = Axios.create({
         'Content-Type': 'application/json'
     },
 })
-
+let counter = 1
 // axios.interceptors.request.use(function (config1) {
 
 //     // Do something before request is sent
@@ -24,10 +24,11 @@ export const axios = Axios.create({
 //     // return Promise.reject(error);
 // });
 
-export const connectAIBot = async ()=>{
-    await axios.post('/api/chat/connect')
-}
+// export const connectAIBot = async ()=>{
+//     await axios.post('/api/chat/connect')
+// }
 export const sendMessageAction = (message)=>{
+    counter++
     return async function (dispatch,getState){
         dispatch({
             type:"NEW-MESSAGE",
@@ -36,15 +37,39 @@ export const sendMessageAction = (message)=>{
     } 
 }
 
+// export const getMessageAction = (message)=>{
+//     return async function (dispatch,getState){
+//         const data = await axios.post('/api/chat/reply',{
+//             message
+//         },{withCredentials:true})
+//         console.log(data?.data)
+//         dispatch({
+//             type:"NEW-MESSAGE",
+//             payload:data?.data?.data?.text
+//         })
+//     } 
+// }
+
 export const getMessageAction = (message)=>{
+    const count = counter++
     return async function (dispatch,getState){
-        const data = await axios.post('/api/chat/reply',{
-            message
-        },{withCredentials:true})
-        console.log(data?.data)
-        dispatch({
-            type:"NEW-MESSAGE",
-            payload:data?.data?.data?.text
+        const source = new EventSource(config.API_URL+'/api/chat/reply' + `?message=${message}`,
+            {withCredentials:true}
+        )
+        source.addEventListener('message',e=>{
+         const data = e.data
+        
+            dispatch({
+                type:"NEW-MESSAGE",
+                payload:{
+                    text : data,
+                    count
+                }
+            })
         })
+        source.addEventListener('close',()=>{
+            source.close()
+        })
+
     } 
 }
