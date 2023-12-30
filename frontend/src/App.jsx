@@ -11,15 +11,9 @@ function App() {
     new FileReader()
   }
   return (
-    <>
-    <Chat/>
-    <div>
-      <form onSubmit={submitFile} className='mt-10'>
-        <input type='file' />
-        <input className='border-2 p-2 border-black' type='submit' />
-      </form>
+    <div className=''>
+      <Chat/>
     </div>
-    </>
   )
 }
 
