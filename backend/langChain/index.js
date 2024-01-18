@@ -57,7 +57,7 @@ export const reply = async (message,id,res) => {
             {
                 handleLLMNewToken(token) {
                     res.write('event: message\n');
-                    res.write(`data: ${token} `);
+                    res.write(`data: ${token}`);
                     res.write('\n\n');
                 },
             }
