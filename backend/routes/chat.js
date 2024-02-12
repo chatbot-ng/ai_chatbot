@@ -1,14 +1,11 @@
 
 import { Router } from 'express';
-import { sendReply ,testing} from '../controllers/chat.js';
+import { get_webhook, sendReply ,testing,post_webhook} from '../controllers/chat.js';
 
 const chatRouter = Router();
-
-// chatRouter.get('/reply', test ); 
-// chatRouter.post('/reply', sendReply); 
+ 
 chatRouter.get('/reply', sendReply); 
 chatRouter.post('/test', testing ); 
-// chatRouter.post('/connect', createChain);
-// chatRouter.get('/', );
-
+chatRouter.get('/webhook',get_webhook)
+chatRouter.post('/webhook',post_webhook)
 export default chatRouter;
