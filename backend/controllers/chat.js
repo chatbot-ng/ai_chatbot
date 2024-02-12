@@ -67,7 +67,7 @@ export const get_webhook = async (req, res) => {
 }
 
 export const post_webhook = async (req, res) => {
-    console.log(req.body,req.query)
+    console.log(JSON.stringify(req.body))
     res.send({
         message: "Hello"
     })
