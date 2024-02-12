@@ -54,6 +54,25 @@ export const testing = async (req, res) => {
     return
 }
 
+export const get_webhook = async (req, res) => {
+    if (
+        req.query['hub.mode'] == 'subscribe' &&
+        req.query['hub.verify_token'] == process.env.WHATSAPP_VERIFY_TOKEN
+    ) {
+        res.send(req.query['hub.challenge']);
+    } else {
+        res.sendStatus(400);
+    }
+    return
+}
+
+export const post_webhook = async (req, res) => {
+    console.log(req.body,req.query)
+    res.send({
+        message: "Hello"
+    })
+    return
+}
 // export default {
 //     sendReply,
 //     test
