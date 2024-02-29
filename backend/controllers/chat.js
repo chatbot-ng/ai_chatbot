@@ -1,4 +1,4 @@
-import { reply , testingPrompt} from '../langChain/index.js'
+import { reply , testingPrompt,pipe} from '../langChain/index.js'
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 export function prepStream(res) {
@@ -25,6 +25,12 @@ export const sendReply = async (req, res) => {
     const data = await reply(message,id,res)
 }
 
+export const sendPipeReply = async (req, res) => {
+    prepStream(res)
+    const {message} = req.query
+    const id = req.session.memory
+    const data = await pipe(message,id,res)
+}
 // export const test = async (req, res) => {
 //     const data = await loadPDF()
 //     res.send({

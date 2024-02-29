@@ -1,8 +1,8 @@
 import { useSelector,useDispatch } from "react-redux"
 import DisplayChat from "./DisplayChat"
 import { useState} from "react"
-import { sendMessageAction ,getMessageAction} from "../Redux/action"
-export default function (){
+import { sendMessageAction ,getMessageAction,sendPipeMessageAction ,getPipeMessageAction} from "../Redux/action"
+export default function ({location}) {
     const [chatbox, setChatbox] = useState('')
     const dispatch = useDispatch()
     function changeChatBox(e) {
@@ -14,8 +14,12 @@ export default function (){
     }
     function sendMessage() {
         if(chatbox.trim()!== ''){
-            dispatch(sendMessageAction(chatbox))
-            dispatch(getMessageAction(chatbox))
+            if(location==='/'){
+                dispatch(sendMessageAction(chatbox))
+                dispatch(getMessageAction(chatbox))
+            }else{dispatch(sendPipeMessageAction(chatbox))
+                dispatch(getPipeMessageAction(chatbox))
+            }
             setChatbox('')
         }
     }

@@ -8,6 +8,7 @@ export const axios = Axios.create({
     },
 })
 let counter = 1
+let counter2 = 1
 // axios.interceptors.request.use(function (config1) {
 
 //     // Do something before request is sent
@@ -37,6 +38,15 @@ export const sendMessageAction = (message)=>{
     } 
 }
 
+export const sendPipeMessageAction = (message)=>{
+    counter2++
+    return async function (dispatch,getState){
+        dispatch({
+            type:"NEW-PIPE-MESSAGE",
+            payload:message
+        })
+    } 
+}
 // export const getMessageAction = (message)=>{
 //     return async function (dispatch,getState){
 //         const data = await axios.post('/api/chat/reply',{
@@ -61,6 +71,30 @@ export const getMessageAction = (message)=>{
         
             dispatch({
                 type:"NEW-MESSAGE",
+                payload:{
+                    text : data,
+                    count
+                }
+            })
+        })
+        source.addEventListener('close',()=>{
+            source.close()
+        })
+
+    } 
+}
+
+export const getPipeMessageAction = (message)=>{
+    const count = counter2++
+    return async function (dispatch,getState){
+        const source = new EventSource(config.API_URL+'/api/chat/pipe' + `?message=${message}`,
+            {withCredentials:true}
+        )
+        source.addEventListener('message',e=>{
+         const data = e.data
+        
+            dispatch({
+                type:"NEW-PIPE-MESSAGE",
                 payload:{
                     text : data,
                     count
