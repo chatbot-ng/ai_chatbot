@@ -1,5 +1,8 @@
 {
   "dependencies": {
+    "@langchain/core": "^0.1.39",
+    "@langchain/mongodb": "^0.0.1",
+    "@langchain/openai": "^0.0.15",
     "axios": "^1.5.0",
     "bcryptjs": "^2.4.3",
     "chromadb": "^1.5.11",
@@ -8,7 +11,7 @@
     "express": "^4.18.2",
     "express-session": "^1.17.3",
     "jsonwebtoken": "^9.0.2",
-    "langchain": "^0.0.153",
+    "langchain": "^0.1.24",
     "mongoose": "^7.5.2",
     "moongoose": "^0.0.5",
     "morgan": "^1.10.0",
