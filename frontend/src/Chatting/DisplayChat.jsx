@@ -1,14 +1,11 @@
 import {useSelector} from 'react-redux/es/hooks/useSelector'
-export default function({location}){
+export default function(){
     const chat = useSelector(store=> store.chat)
-    const pipe = useSelector(store=> store.pipe)
-    return <>
+    return <div className='mb-14'>
         {
-           location==='/'? chat?.map((item,index)=>{
-                return <div key={index}>{item}</div>
-            }): pipe?.map((item,index)=>{
-                return <div key={index}>{item}</div>
+            chat?.map((item,index)=>{
+                return index%2===1?<div key={index} className="text-right">{item}</div>: <div key={index} dangerouslySetInnerHTML={{__html:item}} className="text-left"/>
             })
         }
-    </>
+    </div>
 }

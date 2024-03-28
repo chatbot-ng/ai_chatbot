@@ -8,9 +8,9 @@ import { Provider } from'react-redux'
 import store from './Redux/store'
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <Helmet>
+    {/* <Helmet>
       
-    </Helmet>
+    </Helmet> */}
     <Provider store={store}>
       <BrowserRouter>
       <div className="bg-white min-h-[calc(100vh-1.5rem-3px)]">
