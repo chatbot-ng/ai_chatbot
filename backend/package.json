@@ -17,5 +17,10 @@
     "morgan": "^1.10.0",
     "pdf-parse": "^1.1.1"
   },
-  "type": "module"
+  "type": "module",
+  "scripts": {
+    "start1":"cd ../frontend && npm run build && cd ../backend && node index.js 3035",
+    "start2":"cd ../frontend && npm run build && cd ../backend && node index.js 3036",
+    "install": "cd ../frontend && npm install && cd ../backend && npm install"
+  }
 }

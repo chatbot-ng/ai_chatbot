@@ -5,11 +5,11 @@ import { PDFLoader } from "langchain/document_loaders/fs/pdf";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { ConversationalRetrievalQAChain, LLMChain} from "langchain/chains";
-import { PromptTemplate } from "@langchain/core/prompts";
-import { MongoDBAtlasVectorSearch }  from "@langchain/mongodb";
+import { ChatPromptTemplate, MessagesPlaceholder, PromptTemplate } from "@langchain/core/prompts";
+import { MongoDBAtlasVectorSearch, MongoDBChatMessageHistory }  from "@langchain/mongodb";
 import {MongoClient} from 'mongodb'
 import {MONGODB_ATLAS_VECTOR_URI, OPENAI_API_KEY} from '../config/config.js'
-import { RunnableSequence, RunnablePassthrough } from "@langchain/core/runnables";
+import { RunnableSequence,  RunnableWithMessageHistory } from "@langchain/core/runnables";
 import { formatDocumentsAsString } from "langchain/util/document";
 import { AIMessage } from "@langchain/core/messages";
 const chat = new ChatOpenAI({
@@ -22,7 +22,8 @@ const chat = new ChatOpenAI({
 const model = new OpenAI({
     temperature: 0,
     modelName: 'gpt-3.5-turbo',
-    openAIApiKey:OPENAI_API_KEY
+    openAIApiKey:OPENAI_API_KEY,
+    verbose : true
   })
 const memoryStorage = {
      pushMemory: function(id){
@@ -96,32 +97,72 @@ export const reply = async (message,id,res) => {
     catch(e){console.log(e);return null;}
 }
 
-const prompt =  PromptTemplate.fromTemplate(`
-    You are a working professional at a company. Your name is Chetan Nagre. Your task is to help user with the question they ask about you.
-    For answering the question, you need to use the following information:
-    {context}
-    
-    Answer the following question asked by the user in friendly and professional language:
-    {input}
-`)
+const RESPONSE_TEMPLATE =  `You are a working professional at a company. Your name is Chetan Nagre. Your task is to help user with the question they ask.
+        Using the provided context, answer the user's question to the best of your ability using the resources provided.
+        Generate a comprehensive and informative answer (but no more than 80 words) for a given question based solely on the provided search results.
+        You must only use information from the provided search results.
+        Use an unbiased and journalistic tone.
+        Combine search results together into a coherent answer.
+        Do not repeat text.
 
+        You should use html blocks to format your answer for readability.
+        Use html unordered list, tables if needed.
+
+        Anything between the following \`context\` is retrieved from a knowledge bank, not part of the conversation with the user.
+
+        <context>
+        {context}
+        <context/>`
+
+const REPHRASE_TEMPLATE = `Given the following conversation and a follow up input, rephrase the follow up input to be a standalone input.
+        Chat History:
+        {chat_history}
+        Follow Up Input: {question}
+        Standalone Input:`;
 const chain = RunnableSequence.from([
     {
-        input: new RunnablePassthrough(),
-        context: retriever.pipe(formatDocumentsAsString),
+        input: (initialInput)=>initialInput.input,
+        chat_history: (initialInput)=>initialInput.chat_history,
     },
-    prompt,
+    {
+        input: (initialInput)=>initialInput.input,
+        question: (initialInput)=> PromptTemplate.fromTemplate(REPHRASE_TEMPLATE).pipe(model).invoke({
+            question: initialInput.input,
+            chat_history:formatDocumentsAsString(initialInput.chat_history)
+        }),
+        chat_history: (initialInput)=>initialInput.chat_history,
+    },
+    {  
+        context: async (initialInput)=>{
+            console.log(initialInput);
+            const docs = await retriever._getRelevantDocuments(initialInput.input)
+            return formatDocumentsAsString(docs)
+        },
+        question: (initialInput)=>initialInput.question,
+        chat_history: (initialInput)=>initialInput.chat_history,
+    },
+    ChatPromptTemplate.fromMessages([
+        ["system", RESPONSE_TEMPLATE],
+        new MessagesPlaceholder("chat_history"),
+        ["human", "{question}"],
+    ]),
     model,
 ]);
-
-// const chain = prompt.pipe(chat)
-
-export const pipe = async (message,id,res) => {
+        
+const chatHistory = new RunnableWithMessageHistory({
+    runnable: chain,
+    inputMessagesKey: "input",
+    historyMessagesKey: "chat_history",
+    getMessageHistory: async (sessionId) => {
+        const history =new MongoDBChatMessageHistory({ collection ,sessionId})
+        return history;
+    }   
+})
+        // const chain = prompt.pipe(chat)
+        
+export const pipe = async (input,sessionId,res) => {
     try{
-        if(memoryStorage[id]===undefined){
-            memoryStorage.pushMemory(id)
-        }
-        const reply = await chain.stream(message)
+        const reply = await chatHistory.stream({input},{configurable:{sessionId}})
         
         for await (const token of reply){
             res.write('event: message\n');
